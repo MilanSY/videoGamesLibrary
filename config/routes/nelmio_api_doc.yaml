@@ -1,0 +1,7 @@
+# Route pour le JSON de l'API (utilisé par Swagger UI)
+app.swagger_json:
+    path: /api/doc.json
+    methods: GET
+    defaults:
+        _controller: nelmio_api_doc.controller.swagger_json
+        area: default

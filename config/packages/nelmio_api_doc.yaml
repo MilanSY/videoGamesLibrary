@@ -1,0 +1,16 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Video Games Library API
+            description: API pour la gestion d'une bibliothèque de jeux vidéo
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+    areas: # to filter documented areas
+        default:
+            path_patterns:
+                - ^/api(?!/doc) # Accepts routes under /api except /api/doc

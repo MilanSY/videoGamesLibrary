@@ -1,0 +1,291 @@
+{
+    "info": {
+        "_postman_id": "video-games-api-collection",
+        "name": "Video Games Library API",
+        "description": "Collection des routes API pour la bibliothèque de jeux vidéo",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "video-games-api"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        },
+                        "description": "Enregistrer un nouvel utilisateur"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login User",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.token) {",
+                                    "        pm.environment.set(\"jwt_token\", jsonData.token);",
+                                    "        console.log(\"JWT token saved to environment variable\");",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        },
+                        "description": "Authentifier un utilisateur et obtenir un token JWT"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "me"
+                            ]
+                        },
+                        "description": "Obtenir les informations de l'utilisateur connecté"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints d'authentification"
+        },
+        {
+            "name": "Video Games",
+            "item": [
+                {
+                    "name": "Get All Video Games",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/videogames",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "videogames"
+                            ]
+                        },
+                        "description": "Récupérer tous les jeux vidéo"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Video Game by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/videogames/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "videogames",
+                                "1"
+                            ]
+                        },
+                        "description": "Récupérer un jeu vidéo par son ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Admin Test Endpoint",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/videogames/admin/test",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "videogames",
+                                "admin",
+                                "test"
+                            ]
+                        },
+                        "description": "Endpoint de test pour les administrateurs (nécessite le rôle ADMIN)"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints pour les jeux vidéo"
+        },
+        {
+            "name": "Test Endpoints",
+            "item": [
+                {
+                    "name": "Test Auth Route",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/test-auth",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "test-auth"
+                            ]
+                        },
+                        "description": "Route de test simple"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Test Error 500",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/test-error",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "test-error"
+                            ]
+                        },
+                        "description": "Route pour tester la gestion des erreurs 500"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Test Error 404",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/test-404",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "test-404"
+                            ]
+                        },
+                        "description": "Route pour tester la gestion des erreurs 404"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints de test"
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string",
+            "description": "URL de base de votre API Symfony"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string",
+            "description": "Token JWT pour l'authentification"
+        }
+    ]
+}
