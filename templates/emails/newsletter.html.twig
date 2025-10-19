@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Newsletter - Jeux à venir</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				color: #333;
+				max-width: 600px;
+				margin: 0 auto;
+				padding: 20px;
+				background-color: #f4f4f4;
+			}
+			.container {
+				background-color: #ffffff;
+				padding: 30px;
+				border-radius: 10px;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+			h1 {
+				color: #2c3e50;
+				text-align: center;
+				border-bottom: 3px solid #3498db;
+				padding-bottom: 10px;
+			}
+			.intro {
+				background-color: #ecf0f1;
+				padding: 15px;
+				border-radius: 5px;
+				margin: 20px 0;
+			}
+			.game-card {
+				background-color: #f8f9fa;
+				border-left: 4px solid #3498db;
+				padding: 15px;
+				margin: 15px 0;
+				border-radius: 5px;
+				display: flex;
+				gap: 15px;
+			}
+			.game-cover {
+				flex-shrink: 0;
+				width: 150px;
+				height: 200px;
+				object-fit: cover;
+				border-radius: 5px;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+			}
+			.game-content {
+				flex: 1;
+			}
+			.game-title {
+				color: #2980b9;
+				font-size: 1.2em;
+				font-weight: bold;
+				margin-bottom: 10px;
+			}
+			.game-info {
+				margin: 5px 0;
+				font-size: 0.95em;
+			}
+			.game-info strong {
+				color: #555;
+			}
+			.release-date {
+				background-color: #e74c3c;
+				color: white;
+				padding: 5px 10px;
+				border-radius: 3px;
+				display: inline-block;
+				font-weight: bold;
+				margin-top: 5px;
+			}
+			.categories {
+				margin-top: 10px;
+			}
+			.category-badge {
+				background-color: #9b59b6;
+				color: white;
+				padding: 3px 8px;
+				border-radius: 3px;
+				font-size: 0.85em;
+				margin-right: 5px;
+				display: inline-block;
+			}
+			.footer {
+				text-align: center;
+				margin-top: 30px;
+				padding-top: 20px;
+				border-top: 1px solid #ddd;
+				color: #777;
+				font-size: 0.9em;
+			}
+			.no-games {
+				text-align: center;
+				padding: 30px;
+				color: #95a5a6;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>🎮 Newsletter Jeux Vidéo 🎮</h1>
+
+			<div class="intro">
+				<p>
+					<strong>Bonjour
+						{{ user.email }}
+						!</strong>
+				</p>
+				<p>Voici les jeux qui sortent dans les
+					<strong>7 prochains jours</strong>
+					:</p>
+			</div>
+
+			{% if games is empty %}
+				<div class="no-games">
+					<p>😔 Aucun jeu prévu pour cette semaine.</p>
+					<p>Revenez la semaine prochaine pour découvrir les nouveautés !</p>
+				</div>
+			{% else %}
+				{% for game in games %}
+					<div class="game-card">
+						{% if game.coverImage %}
+							<img src="https://127.0.0.1:8000{{ game.coverImage }}" alt="{{ game.title }}" class="game-cover">
+						{% else %}
+							<div style="width: 150px; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em; flex-shrink: 0;">🎮</div>
+						{% endif %}
+
+						<div class="game-content">
+							<div class="game-title">{{ game.title }}</div>
+
+							<div class="game-info">
+								<strong>📝 Description:</strong>
+								{{ game.description ?? 'Aucune description disponible' }}
+							</div>
+
+							<div class="game-info">
+								<strong>🏢 Éditeur:</strong>
+								{{ game.editor.name }}
+								({{ game.editor.country }})
+							</div>
+
+							<div class="categories">
+								<strong>🏷️ Catégories:</strong>
+								{% for category in game.categories %}
+									<span class="category-badge">{{ category.name }}</span>
+								{% endfor %}
+							</div>
+
+							<div class="release-date">
+								📅 Sortie:
+								{{ game.releaseDate|date('d/m/Y') }}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
+
+			<div class="footer">
+				<p>Merci de votre abonnement à notre newsletter !</p>
+				<p>
+					<small>©
+						{{ 'now'|date('Y') }}
+						Video Games Library - Tous droits réservés</small>
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

@@ -117,20 +117,50 @@ class AppFixtures extends Fixture
         $marioOdyssey->addCategory($aventure);
         $manager->persist($marioOdyssey);
 
+        // Jeux à venir dans les 7 prochains jours (pour tester la newsletter)
+        $upcomingGame1 = new VideoGame();
+        $upcomingGame1->setTitle('Final Fantasy XVI: The Rising Tide');
+        $upcomingGame1->setReleaseDate((new \DateTime())->modify('+3 days'));
+        $upcomingGame1->setDescription('Le DLC tant attendu de Final Fantasy XVI apporte de nouvelles aventures épiques.');
+        $upcomingGame1->setEditor($cdProjekt); // Utilisons un éditeur existant
+        $upcomingGame1->addCategory($rpg);
+        $upcomingGame1->addCategory($action);
+        $manager->persist($upcomingGame1);
+
+        $upcomingGame2 = new VideoGame();
+        $upcomingGame2->setTitle('Hades II - Early Access');
+        $upcomingGame2->setReleaseDate((new \DateTime())->modify('+5 days'));
+        $upcomingGame2->setDescription('La suite du roguelike acclamé par la critique revient avec de nouveaux personnages et mécaniques.');
+        $upcomingGame2->setEditor($sandfall);
+        $upcomingGame2->addCategory($action);
+        $upcomingGame2->addCategory($indie);
+        $manager->persist($upcomingGame2);
+
         // Création des utilisateurs
         $userNormal = new User();
         $userNormal->setEmail('user@example.com');
         $userNormal->setRoles(['ROLE_USER']);
-        $hashedPassword = $this->passwordHasher->hashPassword($userNormal, 'milanscroll');
+        $userNormal->setSubscriptionToNewsletter(false); // Non abonné
+        $hashedPassword = $this->passwordHasher->hashPassword($userNormal, 'password123');
         $userNormal->setPassword($hashedPassword);
         $manager->persist($userNormal);
 
         $userAdmin = new User();
         $userAdmin->setEmail('admin@example.com');
         $userAdmin->setRoles(['ROLE_ADMIN']);
-        $hashedPasswordAdmin = $this->passwordHasher->hashPassword($userAdmin, 'milanscroll');
+        $userAdmin->setSubscriptionToNewsletter(false); // Non abonné
+        $hashedPasswordAdmin = $this->passwordHasher->hashPassword($userAdmin, 'password123');
         $userAdmin->setPassword($hashedPasswordAdmin);
         $manager->persist($userAdmin);
+
+        // Utilisateur Milan pour recevoir les newsletters réelles
+        $userMilan = new User();
+        $userMilan->setEmail('milanjuino@gmail.com');
+        $userMilan->setRoles(['ROLE_USER']);
+        $userMilan->setSubscriptionToNewsletter(true); // Abonné à la newsletter
+        $hashedPasswordMilan = $this->passwordHasher->hashPassword($userMilan, 'password123');
+        $userMilan->setPassword($hashedPasswordMilan);
+        $manager->persist($userMilan);
 
         $manager->flush();
     }

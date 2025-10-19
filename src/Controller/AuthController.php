@@ -16,94 +16,16 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 class AuthController extends AbstractController
 {
-    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
+    #[Route('/auth', name: 'auth', methods: ['POST'])]
     #[OA\Post(
-        path: '/api/register',
-        summary: 'Enregistrer un nouvel utilisateur',
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                type: 'object',
-                properties: [
-                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
-                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123')
-                ]
-            )
-        ),
-        tags: ['Authentication']
-    )]
-    #[OA\Response(
-        response: 201,
-        description: 'Utilisateur créé avec succès',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'message', type: 'string'),
-                new OA\Property(
-                    property: 'user',
-                    type: 'object',
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer'),
-                        new OA\Property(property: 'email', type: 'string'),
-                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
-                    ]
-                )
-            ]
-        )
-    )]
-    #[OA\Response(response: 400, description: 'Email et mot de passe requis')]
-    #[OA\Response(response: 409, description: 'L\'utilisateur existe déjà')]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['email']) || !isset($data['password'])) {
-            return $this->json([
-                'message' => 'Email and password are required',
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // Vérifier si l'utilisateur existe déjà
-        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if ($existingUser) {
-            return $this->json([
-                'message' => 'User already exists',
-            ], JsonResponse::HTTP_CONFLICT);
-        }
-
-        // Créer le nouvel utilisateur
-        $user = new User();
-        $user->setEmail($data['email']);
-        $user->setRoles(['ROLE_USER']);
-
-        // Hasher le mot de passe
-        $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
-        $user->setPassword($hashedPassword);
-
-        // Sauvegarder en base
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return $this->json([
-            'message' => 'User created successfully',
-            'user' => [
-                'id' => $user->getId(),
-                'email' => $user->getEmail(),
-                'roles' => $user->getRoles(),
-            ],
-        ], JsonResponse::HTTP_CREATED);
-    }
-
-    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    #[OA\Post(
-        path: '/api/login',
+        path: '/auth',
         summary: 'Authentifier un utilisateur et obtenir un token JWT',
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
                 type: 'object',
                 properties: [
-                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'username', type: 'string', format: 'username', example: 'user@example.com'),
                     new OA\Property(property: 'password', type: 'string', format: 'password', example: 'password123')
                 ]
             )
@@ -131,14 +53,14 @@ class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['email']) || !isset($data['password'])) {
+        if (!isset($data['username']) || !isset($data['password'])) {
             return $this->json([
-                'message' => 'Email and password are required',
+                'message' => 'Username and password are required',
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Rechercher l'utilisateur
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $data['username']]);
         
         if (!$user || !$passwordHasher->isPasswordValid($user, $data['password'])) {
             return $this->json([

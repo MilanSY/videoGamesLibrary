@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -17,6 +18,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: "L'email ne peut pas être vide")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas un email valide")]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: "L'email ne peut pas dépasser {{ limit }} caractères"
+    )]
     private ?string $email = null;
 
     /**
@@ -29,7 +36,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le mot de passe ne peut pas être vide")]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $subscriptionToNewsletter = false;
 
     public function getId(): ?int
     {
@@ -110,5 +121,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function isSubscriptionToNewsletter(): bool
+    {
+        return $this->subscriptionToNewsletter;
+    }
+
+    public function setSubscriptionToNewsletter(bool $subscriptionToNewsletter): static
+    {
+        $this->subscriptionToNewsletter = $subscriptionToNewsletter;
+
+        return $this;
     }
 }

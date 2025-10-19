@@ -14,3 +14,4 @@ nelmio_api_doc:
         default:
             path_patterns:
                 - ^/api(?!/doc) # Accepts routes under /api except /api/doc
+                - ^/auth # Accepts routes under /auth
