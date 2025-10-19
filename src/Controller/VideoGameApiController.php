@@ -16,9 +16,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class VideoGameApiController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     #[OA\Get(
         path: '/api/videogames',
         summary: 'Récupérer tous les jeux vidéo',
+        security: [['Bearer' => []]],
         tags: ['Video Games']
     )]
     #[OA\Response(
@@ -87,9 +89,11 @@ class VideoGameApiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     #[OA\Get(
         path: '/api/videogames/{id}',
         summary: 'Récupérer un jeu vidéo par son ID',
+        security: [['Bearer' => []]],
         tags: ['Video Games']
     )]
     #[OA\Parameter(
@@ -155,41 +159,5 @@ class VideoGameApiController extends AbstractController
             }, $videoGame->getCategories()->toArray()),
         ]);
     }
-
-    #[Route('/admin/test', name: 'admin_test', methods: ['GET'])]
-    #[OA\Get(
-        path: '/api/videogames/admin/test',
-        summary: 'Endpoint de test pour les administrateurs',
-        tags: ['Admin']
-    )]
-    #[OA\Response(
-        response: 200,
-        description: 'Message de bienvenue pour l\'administrateur',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'message', type: 'string'),
-                new OA\Property(property: 'user', type: 'string')
-            ]
-        )
-    )]
-    #[OA\Response(response: 401, description: 'Non autorisé')]
-    #[OA\Response(response: 403, description: 'Accès interdit (rôle admin requis)')]
-    public function adminTest(): JsonResponse
-    {
-        $user = $this->getUser();
-
-        if (!$user) {
-            return $this->json(['message' => 'Authentication required'], 401);
-        }
-
-        if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            return $this->json(['message' => 'Admin access required'], 403);
-        }
-
-        return $this->json([
-            'message' => 'Hello Admin! You have access to this admin endpoint.',
-            'user' => $user->getUserIdentifier(),
-        ]);
-    }
 }
+

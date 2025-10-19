@@ -26,7 +26,7 @@ class VideoGame
     private ?string $description = null;
 
     #[ORM\ManyToOne]
-    private ?editor $editor = null;
+    private ?Editor $editor = null;
 
     /**
      * @var Collection<int, Category>
@@ -80,12 +80,12 @@ class VideoGame
         return $this;
     }
 
-    public function getEditor(): ?editor
+    public function getEditor(): ?Editor
     {
         return $this->editor;
     }
 
-    public function setEditor(?editor $editor): static
+    public function setEditor(?Editor $editor): static
     {
         $this->editor = $editor;
 

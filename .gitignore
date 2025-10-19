@@ -12,3 +12,9 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+###> VS Code Remote Tunnels ###
+.vscode-server/
+.vscode-server-insiders/
+.vscode-remote/
+###< VS Code Remote Tunnels ###
